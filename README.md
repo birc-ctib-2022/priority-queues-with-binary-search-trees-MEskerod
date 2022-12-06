@@ -1,3 +1,4 @@
+[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-c66648af7eb3fe8bc4f294546bfd86ef473780cde1dea487d3c4ff354943c9ae.svg)](https://classroom.github.com/online_ide?assignment_repo_id=9565763&assignment_repo_type=AssignmentRepo)
 # Search tree priority queues
 
 Search trees and heaps are different structure, but only in the sense that the invariant for how nodes are arranged differ. For a search tree node `v`, `v.value` is greater than all values in `v.left` and smaller than all values in `v.right`, while for a (min-)heap, `v.value` is smaller than all values in both `v.left` and `v.right`.
