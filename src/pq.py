@@ -66,6 +66,12 @@ def rightmost(tree: Node[T]) -> T:
         tree = tree.right
     return tree.value
 
+def leftmost(tree: Node[T]) -> T: 
+    """Get the leftmost value in a non-empty tree"""
+    while tree.left:
+        tree = tree.left
+    return tree.value
+
 
 def remove(tree: Tree[T], val: T) -> Tree[T]:
     """Remove val from tree."""
@@ -157,19 +163,24 @@ class PriorityQueue(SearchTree[T]):
     @property
     def min_val(self) -> T:
         """Return the smallest value."""
-        # FIXME
-        ...
+        return leftmost(self.root)
 
     def delete_min(self) -> T:
-        # FIXME
         """Delete the smallest value (and return it)."""
-        ...
+        minimum = self.min_val
+        self.remove(minimum)
+        return minimum
 
 
 def pq_sort(x: Iterable[T]) -> Iterator[T]:
     """Sort x using a priority queue."""
-    # FIXME
-    ...
+    sorted = []
+    pq = PriorityQueue(x)
+    while pq.root:
+        sorted.append(pq.delete_min())
+    return sorted
+
+    
 
 
 # Merging
@@ -183,9 +194,36 @@ def general_merge(
     unchanged, but the implementation above does allow for it
     in the same running time.
     """
-    # FIXME
-    ...
+    while y.root:
+        x.insert(y.delete_min())
+    return x
 
+def general_merge_persistent(
+    x: PriorityQueue[T], y: PriorityQueue[T]
+) -> PriorityQueue[T]:
+    """
+    Merge x and y into a new priority queue.
+
+    You don't have to do this persistently, leaving x and y
+    unchanged, but the implementation above does allow for it
+    in the same running time.
+    """
+    
+    pq1 = pq_sort(x)
+    pq2 = pq_sort(y)
+
+    merged = []
+    i, j = 0, 0 
+    while i<len(pq1) and j<len(pq2):
+        if pq1[i] < pq2[j]:
+            merged.append(pq1[i])
+            i += 1
+        else:
+            merged.append(pq2[j])
+            j += 1
+    merged.extend(pq1[i:])
+    merged.extend(pq2[j:])
+    return PriorityQueue(merged)
 
 def special_merge(
     x: PriorityQueue[T], y: PriorityQueue[T]
@@ -203,5 +241,34 @@ def special_merge(
     largest_x = rightmost(x.root)
     smallest_y = y.min_val
     assert largest_x < smallest_y
-    # FIXME
-    ...
+    
+    #If we always insert to value to the right in the smallest tree 
+    tree = x.root
+    while tree.right:
+        tree = tree.right #start at the rightmost node
+    while y.root:
+        tree.right = Node(y.delete_min())
+        tree = tree.right
+    return x
+
+def special_merge_persistent(
+    x: PriorityQueue[T], y: PriorityQueue[T]
+) -> PriorityQueue[T]:
+    """
+    Merge x and y into a new priority queue.
+
+    You can assume that the largest value in x is smaller than
+    the smallest value in y.
+
+    You don't have to do this persistently, leaving x and y
+    unchanged, but the implementation above does allow for it
+    in the same running time.
+    """
+    largest_x = rightmost(x.root)
+    smallest_y = y.min_val
+    assert largest_x < smallest_y
+
+    pq1 = pq_sort(x)
+    pq2 = pq_sort(y)
+    merged = pq1 + pq2
+    return PriorityQueue(merged)
